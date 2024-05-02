@@ -32,7 +32,7 @@ int main(int argc, char ** argv)
 
   grid_map::GridMapPclLoader gridMapPclLoader(node->get_logger());
   const std::string pathToCloud = gm::getPcdFilePath(node);
-  gridMapPclLoader.loadParameters(gm::getParameterPath());
+  gridMapPclLoader.loadParameters(gm::getParameterPath(node));
   gridMapPclLoader.loadCloudFromPcdFile(pathToCloud);
 
   gm::processPointcloud(&gridMapPclLoader, node);

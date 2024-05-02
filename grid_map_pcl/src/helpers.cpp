@@ -50,7 +50,7 @@ void setVerbosityLevelToDebugIfFlagSet(rclcpp::Node::SharedPtr & node)
   }
 }
 
-std::string getParameterPath()
+std::string getParameterPath(rclcpp::Node::SharedPtr & node)
 {
   if (!node->has_parameter("param_path")) {
     node->declare_parameter("param_path", std::string(""));
@@ -60,7 +60,7 @@ std::string getParameterPath()
 
   // std::string filePath = ament_index_cpp::get_package_share_directory("grid_map_pcl") +
   //   "/config/parameters.yaml";
-  
+
   return filePath;
 }
 
