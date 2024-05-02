@@ -25,7 +25,7 @@ namespace grid_map_pcl
 
 void setVerbosityLevelToDebugIfFlagSet(rclcpp::Node::SharedPtr & node);
 
-std::string getParameterPath();
+std::string getParameterPath(rclcpp::Node::SharedPtr & node);
 
 std::string getOutputBagPath(rclcpp::Node::SharedPtr & node);
 
