@@ -127,4 +127,12 @@
       </description>
     </class>
   </library>
+
+  <library path="inflation_filter">
+    <class name="gridMapFilters/InflationFilter" type="grid_map::InflationFilter&lt;grid_map::GridMap&gt;" base_class_type="filters::FilterBase&lt;grid_map::GridMap&gt;">
+      <description>
+        Compute for each cell of a layer the value inside a radius using exponential decay to inflate the targeted area.
+      </description>
+    </class>
+  </library>
 </class_libraries>

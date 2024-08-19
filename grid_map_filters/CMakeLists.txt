@@ -51,6 +51,7 @@ set(filter_libs
   color_blending_filter
   set_basic_layers_filter
   buffer_normalizer_filter
+  inflation_filter
 )
 
 ###########
@@ -81,6 +82,7 @@ add_library(color_map_filter SHARED src/ColorMapFilter.cpp)
 add_library(color_blending_filter SHARED src/ColorBlendingFilter.cpp)
 add_library(set_basic_layers_filter SHARED src/SetBasicLayersFilter.cpp)
 add_library(buffer_normalizer_filter SHARED src/BufferNormalizerFilter.cpp)
+add_library(inflation_filter SHARED src/InflationFilter.cpp)
 
 foreach(lib_name ${filter_libs})
   ament_target_dependencies(${lib_name} SYSTEM
