@@ -88,36 +88,33 @@ bool InflationFilter<T>::update(const T & mapIn, T & mapOut)
     double value;
     Eigen::Vector2d center;
 
+    // Loop through all the grids in map
     for (grid_map::GridMapIterator iterator(mapOut); !iterator.isPastEnd(); ++iterator) {
-        double forceFieldSum = 0.0;
-        double weightSum = 0.0;
+        double maxValue = 0.0;
         mapOut.getPosition(*iterator, center);
 
+        // Loop through a radius around the target grid
         for (grid_map::CircleIterator submapIterator(mapOut, center, radius_);
-        !submapIterator.isPastEnd();
-        ++submapIterator)
-        {
-        if (!mapOut.isValid(*submapIterator, inputLayer_)) {
-            continue;
-        }
-        Eigen::Vector2d neighbor;
-        mapOut.getPosition(*submapIterator, neighbor);
-        double distance = (center - neighbor).norm();
-        double distanceWeight = 1.0 / (distance + 1.0); // Inverse distance weight
-        value = mapOut.at(inputLayer_, *submapIterator);
+            !submapIterator.isPastEnd();
+            ++submapIterator) 
+        {   
+            // Ignore invalid grid
+            if (!mapOut.isValid(*submapIterator, inputLayer_)) continue;
 
-        // Compute force field based on obstacle (lower traversability values)
-        double force = (1.0 - value) * distanceWeight * decay_;
+            Eigen::Vector2d neighbor;
+            mapOut.getPosition(*submapIterator, neighbor);
+            double normalized_dist = (center - neighbor).norm();
 
-        forceFieldSum += force;
-        weightSum += distanceWeight;
+            value = mapOut.at(inputLayer_, *submapIterator);
+
+            // Compute value based on exponential decay
+            double currValue = (1.0 - value) * exp(-normalized_dist * decay_);
+
+            if (currValue > maxValue) maxValue = currValue;
         }
 
-        if (weightSum > 0) {
-        mapOut.at(outputLayer_, *iterator) = 1.0 - std::min(1.0, forceFieldSum / weightSum);
-        } else {
-        mapOut.at(outputLayer_, *iterator) = 1.0; // Handle the case with no valid neighbors.
-        }
+        // Update grid based on max value
+        mapOut.at(outputLayer_, *iterator) = 1.0 - maxValue;
     }
 
     return true;
