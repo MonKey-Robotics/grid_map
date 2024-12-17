@@ -41,24 +41,32 @@ int main(int argc, char ** argv)
   grid_map::GridMap gridMap = gridMapPclLoader.getGridMap();
   gridMap.setFrameId(gm::getMapFrame(node));
 
-  // Setup filter chain
-  filters::FilterChain<grid_map::GridMap> filterChain("grid_map::GridMap");
-  if (filterChain.configure(
-      "filters", node->get_node_logging_interface(),
-      node->get_node_parameters_interface()))
-  {
-      RCLCPP_INFO(node->get_logger(), "Filter chain configured.");
-  } else {
-      RCLCPP_ERROR(node->get_logger(), "Could not configure the filter chain!");
-      rclcpp::shutdown();
-      return EXIT_FAILURE;
+  // Apply filter chain if use_filter_chain is set to true
+  if (!node->has_parameter("use_filter_chain")) {
+    node->declare_parameter("use_filter_chain", true);
   }
+  bool use_filter_chain = node->get_parameter("use_filter_chain").as_bool();
 
-  // Apply filter chain.
-  RCLCPP_INFO(node->get_logger(), "Applying filter chain...");
-  if (!filterChain.update(gridMap, gridMap)) {
-      RCLCPP_ERROR(node->get_logger(), "Could not update the grid map filter chain!");
-      return EXIT_FAILURE;
+  if (use_filter_chain) {
+    // Setup filter chain
+    filters::FilterChain<grid_map::GridMap> filterChain("grid_map::GridMap");
+    if (filterChain.configure(
+        "filters", node->get_node_logging_interface(),
+        node->get_node_parameters_interface()))
+    {
+        RCLCPP_INFO(node->get_logger(), "Filter chain configured.");
+    } else {
+        RCLCPP_ERROR(node->get_logger(), "Could not configure the filter chain!");
+        rclcpp::shutdown();
+        return EXIT_FAILURE;
+    }
+
+    // Apply filter chain.
+    RCLCPP_INFO(node->get_logger(), "Applying filter chain...");
+    if (!filterChain.update(gridMap, gridMap)) {
+        RCLCPP_ERROR(node->get_logger(), "Could not update the grid map filter chain!");
+        return EXIT_FAILURE;
+    }
   }
 
   gm::saveGridMap(gridMap, node, gm::getMapRosbagTopic(node));
