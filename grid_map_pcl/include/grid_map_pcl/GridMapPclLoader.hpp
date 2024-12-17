@@ -106,7 +106,7 @@ public:
    * Load algorithm's parameters.
    * @param[in] full path to the config file with parameters
    */
-  void loadParameters(const std::string & filename);
+  void loadParameters(rclcpp::Node::SharedPtr node);
 
 private:
   /*!

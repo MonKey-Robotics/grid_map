@@ -232,10 +232,10 @@ GridMapPclLoader::Pointcloud::Ptr GridMapPclLoader::getPointcloudInsideGridMapCe
   return pointcloudWithinGridMapCell_[index.x()][index.y()];
 }
 
-void GridMapPclLoader::loadParameters(const std::string & filename)
+void GridMapPclLoader::loadParameters(rclcpp::Node::SharedPtr node)
 {
-  params_->loadParameters(filename);
-  pointcloudProcessor_.loadParameters(filename);
+  params_->loadParameters(node);
+  pointcloudProcessor_.loadParameters(node);
 }
 
 void GridMapPclLoader::savePointCloudAsPcdFile(const std::string & filename) const

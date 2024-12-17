@@ -37,9 +37,9 @@ PointcloudProcessor::PointcloudProcessor(const rclcpp::Logger & node_logger)
   params_ = std::make_unique<grid_map_pcl::PclLoaderParameters>(node_logger_);
 }
 
-void PointcloudProcessor::loadParameters(const std::string & filename)
+void PointcloudProcessor::loadParameters(rclcpp::Node::SharedPtr node)
 {
-  params_->loadParameters(filename);
+  params_->loadParameters(node);
 }
 
 Pointcloud::Ptr PointcloudProcessor::removeOutliersFromInputCloud(

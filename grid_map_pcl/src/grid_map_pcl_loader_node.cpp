@@ -16,6 +16,7 @@
 #include "grid_map_core/GridMap.hpp"
 #include "grid_map_ros/GridMapRosConverter.hpp"
 #include "grid_map_pcl/GridMapPclLoader.hpp"
+#include "filters/filter_chain.hpp"
 #include "grid_map_pcl/helpers.hpp"
 
 namespace gm = ::grid_map::grid_map_pcl;
@@ -32,13 +33,33 @@ int main(int argc, char ** argv)
 
   grid_map::GridMapPclLoader gridMapPclLoader(node->get_logger());
   const std::string pathToCloud = gm::getPcdFilePath(node);
-  gridMapPclLoader.loadParameters(gm::getParameterPath(node));
+  gridMapPclLoader.loadParameters(node);
   gridMapPclLoader.loadCloudFromPcdFile(pathToCloud);
 
   gm::processPointcloud(&gridMapPclLoader, node);
 
   grid_map::GridMap gridMap = gridMapPclLoader.getGridMap();
   gridMap.setFrameId(gm::getMapFrame(node));
+
+  // Setup filter chain
+  filters::FilterChain<grid_map::GridMap> filterChain("grid_map::GridMap");
+  if (filterChain.configure(
+      "filters", node->get_node_logging_interface(),
+      node->get_node_parameters_interface()))
+  {
+      RCLCPP_INFO(node->get_logger(), "Filter chain configured.");
+  } else {
+      RCLCPP_ERROR(node->get_logger(), "Could not configure the filter chain!");
+      rclcpp::shutdown();
+      return EXIT_FAILURE;
+  }
+
+  // Apply filter chain.
+  RCLCPP_INFO(node->get_logger(), "Applying filter chain...");
+  if (!filterChain.update(gridMap, gridMap)) {
+      RCLCPP_ERROR(node->get_logger(), "Could not update the grid map filter chain!");
+      return EXIT_FAILURE;
+  }
 
   gm::saveGridMap(gridMap, node, gm::getMapRosbagTopic(node));
 

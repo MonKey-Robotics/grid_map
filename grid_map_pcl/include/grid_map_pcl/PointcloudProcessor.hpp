@@ -31,7 +31,7 @@ public:
    * Load parameters for the point cloud processing.
    * @param[in] full path to the config file with parameters
    */
-  void loadParameters(const std::string & filename);
+  void loadParameters(rclcpp::Node::SharedPtr node);
 
   /*!
    * Remove outliers from the point cloud. Function is based on

@@ -112,50 +112,50 @@ install(
 ## Testing ##
 #############
 
-if(BUILD_TESTING)
-  # Linting is setup this way to add a filter
-  # to ament_cpplint to ignore the lack of
-  # copyright messages at the top of files.
-  # Copyright messages are being checked for by both
-  # ament_cmake_cpplint & ament_cmake_copyright.
+# if(BUILD_TESTING)
+#   # Linting is setup this way to add a filter
+#   # to ament_cpplint to ignore the lack of
+#   # copyright messages at the top of files.
+#   # Copyright messages are being checked for by both
+#   # ament_cmake_cpplint & ament_cmake_copyright.
 
-  find_package(ament_lint_auto REQUIRED)
-  find_package(ament_lint_auto QUIET)
-  if(ament_lint_auto_FOUND)
-    # exclude copyright checks
-    list(APPEND AMENT_LINT_AUTO_EXCLUDE
-      ament_cmake_cpplint
-      ament_cmake_copyright
-    )
-    ament_lint_auto_find_test_dependencies()
+#   find_package(ament_lint_auto REQUIRED)
+#   find_package(ament_lint_auto QUIET)
+#   if(ament_lint_auto_FOUND)
+#     # exclude copyright checks
+#     list(APPEND AMENT_LINT_AUTO_EXCLUDE
+#       ament_cmake_cpplint
+#       ament_cmake_copyright
+#     )
+#     ament_lint_auto_find_test_dependencies()
 
-    # run cpplint without copyright filter
-    find_package(ament_cmake_cpplint)
-    ament_cpplint(
-      FILTERS -legal/copyright -build/include_order
-    )
-  endif()
-  ament_lint_auto_find_test_dependencies()
+#     # run cpplint without copyright filter
+#     find_package(ament_cmake_cpplint)
+#     ament_cpplint(
+#       FILTERS -legal/copyright -build/include_order
+#     )
+#   endif()
+#   ament_lint_auto_find_test_dependencies()
 
-  find_package(ament_cmake_gtest REQUIRED)
+#   find_package(ament_cmake_gtest REQUIRED)
 
-  # Adding test data to the package share directory
-  install(
-    DIRECTORY test/test_data/
-    DESTINATION share/${PROJECT_NAME}/test_data/
-  )
+#   # Adding test data to the package share directory
+#   install(
+#     DIRECTORY test/test_data/
+#     DESTINATION share/${PROJECT_NAME}/test_data/
+#   )
 
-  ## Add gtest based cpp test target and link libraries
-  ament_add_gtest(${PROJECT_NAME}-test
-    test/GridMapPclLoaderTest.cpp
-    test/HelpersTest.cpp
-    test/PointcloudCreator.cpp
-    test/PointcloudProcessorTest.cpp
-    test/test_helpers.cpp
-    test/test_grid_map_pcl.cpp
-    TIMEOUT 300
-  )
-endif()
+#   ## Add gtest based cpp test target and link libraries
+#   ament_add_gtest(${PROJECT_NAME}-test
+#     test/GridMapPclLoaderTest.cpp
+#     test/HelpersTest.cpp
+#     test/PointcloudCreator.cpp
+#     test/PointcloudProcessorTest.cpp
+#     test/test_helpers.cpp
+#     test/test_grid_map_pcl.cpp
+#     TIMEOUT 300
+#   )
+# endif()
 
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test

@@ -92,7 +92,7 @@ private:
    * @param[in] full path to the config file with parameters
    * @return true if operation was okay
    */
-  bool loadParameters(const std::string & filename);
+  bool loadParameters(rclcpp::Node::SharedPtr node);
 
   /*!
    * Invoke operator[] on the yaml node. Finds
