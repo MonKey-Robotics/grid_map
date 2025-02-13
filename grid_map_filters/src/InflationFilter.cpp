@@ -87,11 +87,15 @@ bool InflationFilter<T>::update(const T & mapIn, T & mapOut)
 
     double value;
     Eigen::Vector2d center;
+    
+    // Remove basic layers so that the whole layer could be displayed
+    mapOut.setBasicLayers(std::vector<std::string>());
 
     // Loop through all the grids in map
     for (grid_map::GridMapIterator iterator(mapOut); !iterator.isPastEnd(); ++iterator) {
         double maxValue = 0.0;
         mapOut.getPosition(*iterator, center);
+        bool has_valid_neighbor = false;
 
         // Loop through a radius around the target grid
         for (grid_map::CircleIterator submapIterator(mapOut, center, radius_);
@@ -100,6 +104,8 @@ bool InflationFilter<T>::update(const T & mapIn, T & mapOut)
         {   
             // Ignore invalid grid
             if (!mapOut.isValid(*submapIterator, inputLayer_)) continue;
+            
+            has_valid_neighbor = true; // At least one valid neighbor found
 
             Eigen::Vector2d neighbor;
             mapOut.getPosition(*submapIterator, neighbor);
@@ -112,9 +118,12 @@ bool InflationFilter<T>::update(const T & mapIn, T & mapOut)
 
             if (currValue > maxValue) maxValue = currValue;
         }
+        
+        // Only update grid that have at least one valid neighbor
+        if (has_valid_neighbor) {
+            mapOut.at(outputLayer_, *iterator) = 1.0 - maxValue;
+        }
 
-        // Update grid based on max value
-        mapOut.at(outputLayer_, *iterator) = 1.0 - maxValue;
     }
 
     return true;
